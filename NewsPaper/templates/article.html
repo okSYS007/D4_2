@@ -1,0 +1,23 @@
+
+{% extends 'flatpages/default.html' %}
+  
+{% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
+ 
+{% block title %}
+Articles
+{% endblock title %}
+
+{% block content %}
+<h1>Все статьи</h1>
+
+{% if article %}
+    {{ article.post_title|Censor:article.post_title}}
+    <br>
+    {{ article.post_text|Censor:article.post_text}} 
+    <br>
+    {{ article.creation_date|date:'d-M-Y-H:i' }}
+{% else %}
+    <h2>Статей нет!</h2>
+{% endif %}
+
+{% endblock content %}
