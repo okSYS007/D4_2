@@ -3,10 +3,9 @@ from django.views.generic import ListView, DetailView # импортируем �
 from django.core.paginator import Paginator # импортируем класс, позволяющий удобно осуществлять постраничный вывод
 from django.shortcuts import render
 from django.views import View # импортируем простую вьюшку
-from .models import Post
+from .models import Post, Category
 from .filters import PostFilter # импортируем недавно написанный фильтр
- 
-from datetime import datetime
+from .forms import PostForm # импортируем нашу форму
  
 class PostList(ListView):
 
@@ -15,10 +14,22 @@ class PostList(ListView):
     context_object_name = 'news'
     ordering = ['-creation_date']
     paginate_by = 10 # поставим постраничный вывод в один элемент
+    form_class = PostForm
 
     def get_context_data(self, **kwargs): # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        context['form'] = PostForm()
         return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST) # создаём новую форму, забиваем в неё данные из POST-запроса 
+ 
+        if form.is_valid(): # если пользователь ввёл всё правильно и нигде не накосячил, то сохраняем новый товар
+            form.save()
+ 
+        return super().get(request, *args, **kwargs)
+    
 
 # # создаём представление, в котором будут детали конкретного отдельного товара
 class PostDetail(DetailView):

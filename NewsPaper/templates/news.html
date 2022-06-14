@@ -8,8 +8,11 @@ News
 {% endblock title %}
 
 {% block content %}
+<form method="GET">
+    {{ filter.form }} <!-- Форму от фильтров за нас сделает Django. А вот кнопку, увы, придётся делать самому -->
+</form>
+
 <h1>Все новости</h1>
-<h3>{{ time_now|date:'M d Y' }}</h3> 
 {% if news|length > 1 %}
 <h3>Всего новостей: {{ news|length }}</h3>
 {% endif %}
@@ -43,9 +46,15 @@ News
         {% endif %}
         
     {% endif %}
-      
+        
 {% else %}
     <h2>Новостей нет!</h2>
 {% endif %}
+
+<form method="POST">
+    {% csrf_token %} 
+    {{ form }} <!-- Теперь нам нужна только готовая форма и кнопка -->
+    <input type="submit" value="Добавить товар">
+</form>
 
 {% endblock content %}
